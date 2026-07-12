@@ -4,10 +4,10 @@ This document outlines the sequential, atomic tasks required to build the CodeMe
 
 ## Phase 1: Project Setup & Infrastructure
 - [x] 1. Initialize a new Git repository for the project (monorepo or split frontend/backend).
-- [ ] 2. **Backend**: Create a Python virtual environment (`python -m venv venv`).
-- [ ] 3. **Backend**: Create `requirements.txt` with FastAPI, Uvicorn, SQLAlchemy, MySQL-connector, passlib, python-jose, and google-generativeai.
-- [ ] 4. **Backend**: Install dependencies (`pip install -r requirements.txt`).
-- [ ] 5. **Backend**: Set up the basic FastAPI application structure (`main.py`, `routes/`, `models/`, `services/`, `utils/`).
+- [x] 2. **Backend**: Create a Python virtual environment (`python -m venv venv`).
+- [x] 3. **Backend**: Create `requirements.txt` with FastAPI, Uvicorn, SQLAlchemy, MySQL-connector, passlib, python-jose, and google-generativeai.
+- [x] 4. **Backend**: Install dependencies (`pip install -r requirements.txt`).
+- [x] 5. **Backend**: Set up the basic FastAPI application structure (`main.py`, `routes/`, `models/`, `services/`, `utils/`).
 - [ ] 6. **Backend**: Create a `.env` file for `DATABASE_URL`, `GEMINI_API_KEY`, and JWT secrets (add to `.gitignore`).
 - [ ] 7. **Database**: Set up `database.py` with SQLAlchemy to connect to the MySQL database.
 - [ ] 8. **Database**: Define the SQLAlchemy database models (`User`, `Submission`, `ChatHistory`, `UserStats`) in `models.py`.
