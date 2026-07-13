@@ -16,9 +16,56 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+    <nav class="navbar">
+        <div class="logo">CodeMentor AI</div>
+        <div class="nav-links">
+            <button id="auth-btn" class="btn btn-primary" onclick="openAuthModal()">Login / Sign Up</button>
+        </div>
+    </nav>
+
     <div id="app-root">
-        <!-- Application UI will go here -->
+        <header class="hero">
+            <h1>Master Any Codebase</h1>
+            <p>Paste your confusing code, and our AI will explain it instantly.</p>
+        </header>
+        
+        <!-- Future Main App Interface goes here -->
+    </div>
+
+    <!-- Auth Modal (Glassmorphism) -->
+    <div id="auth-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+            <div class="modal-header">
+                <h2 id="modal-title">Welcome Back</h2>
+                <div class="auth-tabs">
+                    <button id="tab-login" class="tab active" onclick="switchAuthTab('login')">Login</button>
+                    <button id="tab-signup" class="tab" onclick="switchAuthTab('signup')">Sign Up</button>
+                </div>
+            </div>
+            
+            <form id="auth-form" class="auth-form">
+                <!-- Signup specific field -->
+                <div id="name-group" class="form-group hidden">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" placeholder="John Doe">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required placeholder="you@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                
+                <div id="auth-error" class="error-msg hidden"></div>
+                
+                <button type="submit" id="submit-auth" class="btn btn-primary full-width">Login</button>
+            </form>
+        </div>
     </div>
 
     <!-- Custom JavaScript -->

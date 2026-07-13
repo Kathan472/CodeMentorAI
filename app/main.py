@@ -23,6 +23,12 @@ app.add_middleware(
 # Compression
 app.add_middleware(GZIPMiddleware, minimum_size=1000)
 
+# Import Routes
+from app.routes import auth
+
+# Include Routes
+app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
+
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}

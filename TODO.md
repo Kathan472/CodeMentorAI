@@ -16,11 +16,11 @@ This document outlines the sequential, atomic tasks required to build the CodeMe
 - [x] 11. **Frontend**: Create empty `styles.css` and `app.js` files and link them in `index.html`.
 
 ## Phase 2: Authentication System
-- [ ] 12. **Backend**: Implement password hashing and JWT token generation in `utils/security.py`.
-- [ ] 13. **Backend**: Build the user signup endpoint (`POST /api/auth/signup`).
-- [ ] 14. **Backend**: Build the user login endpoint (`POST /api/auth/login`).
-- [ ] 15. **Backend**: Implement JWT authentication middleware/dependency to protect secure routes (`middleware/auth.py`).
-- [ ] 16. **Frontend**: Build the HTML/CSS UI for the Signup and Login forms (modals or separate pages).
+- [x] 12. **Backend**: Implement password hashing and JWT token generation in `utils/security.py`.
+- [x] 13. **Backend**: Build the user signup endpoint (`POST /api/auth/signup`).
+- [x] 14. **Backend**: Build the user login endpoint (`POST /api/auth/login`).
+- [x] 15. **Backend**: Implement JWT authentication middleware/dependency to protect secure routes (`middleware/auth.py`).
+- [x] 16. **Frontend**: Build the HTML/CSS UI for the Signup and Login forms (modals or separate pages).
 - [ ] 17. **Frontend**: Write JS logic to handle signup form submission and display validation errors/success.
 - [ ] 18. **Frontend**: Write JS logic to handle login form submission and securely store the JWT token (e.g., localStorage).
 - [ ] 19. **Frontend**: Write JS logic for the logout functionality (clearing the token and updating UI).
