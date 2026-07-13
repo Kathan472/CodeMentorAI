@@ -8,10 +8,10 @@ This document outlines the sequential, atomic tasks required to build the CodeMe
 - [x] 3. **Backend**: Create `requirements.txt` with FastAPI, Uvicorn, SQLAlchemy, MySQL-connector, passlib, python-jose, and google-generativeai.
 - [x] 4. **Backend**: Install dependencies (`pip install -r requirements.txt`).
 - [x] 5. **Backend**: Set up the basic FastAPI application structure (`main.py`, `routes/`, `models/`, `services/`, `utils/`).
-- [ ] 6. **Backend**: Create a `.env` file for `DATABASE_URL`, `GEMINI_API_KEY`, and JWT secrets (add to `.gitignore`).
-- [ ] 7. **Database**: Set up `database.py` with SQLAlchemy to connect to the MySQL database.
-- [ ] 8. **Database**: Define the SQLAlchemy database models (`User`, `Submission`, `ChatHistory`, `UserStats`) in `models.py`.
-- [ ] 9. **Database**: Create the initial database tables (using SQLAlchemy `Base.metadata.create_all`).
+- [x] 6. **Backend**: Create a `.env` file for `DATABASE_URL`, `GEMINI_API_KEY`, and JWT secrets (add to `.gitignore`).
+- [x] 7. **Database**: Set up `database.py` with SQLAlchemy to connect to the MySQL database.
+- [x] 8. **Database**: Define the SQLAlchemy database models (`User`, `Submission`, `ChatHistory`, `UserStats`) in `models.py`.
+- [x] 9. **Database**: Create the initial database tables (using SQLAlchemy `Base.metadata.create_all`).
 - [ ] 10. **Frontend**: Create the base `index.html` structure.
 - [ ] 11. **Frontend**: Create empty `styles.css` and `app.js` files and link them in `index.html`.
 
