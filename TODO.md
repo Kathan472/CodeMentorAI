@@ -12,8 +12,8 @@ This document outlines the sequential, atomic tasks required to build the CodeMe
 - [x] 7. **Database**: Set up `database.py` with SQLAlchemy to connect to the MySQL database.
 - [x] 8. **Database**: Define the SQLAlchemy database models (`User`, `Submission`, `ChatHistory`, `UserStats`) in `models.py`.
 - [x] 9. **Database**: Create the initial database tables (using SQLAlchemy `Base.metadata.create_all`).
-- [ ] 10. **Frontend**: Create the base `index.html` structure.
-- [ ] 11. **Frontend**: Create empty `styles.css` and `app.js` files and link them in `index.html`.
+- [x] 10. **Frontend**: Create the base `index.html` structure.
+- [x] 11. **Frontend**: Create empty `styles.css` and `app.js` files and link them in `index.html`.
 
 ## Phase 2: Authentication System
 - [ ] 12. **Backend**: Implement password hashing and JWT token generation in `utils/security.py`.
