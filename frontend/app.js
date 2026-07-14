@@ -355,9 +355,11 @@ async function explainCode() {
     const code = monacoEditor.getValue();
     const langSelect = document.getElementById('language-select');
     const language = langSelect ? langSelect.value : 'python';
+    const githubUrlInput = document.getElementById('github-url-input');
+    const github_url = githubUrlInput ? githubUrlInput.value.trim() : null;
     
-    if (!code.trim()) {
-        alert('Error: No code to explain. Please write some code first.');
+    if (!code.trim() && !github_url) {
+        alert('Error: No code or GitHub URL to explain. Please write some code or paste a GitHub link first.');
         return;
     }
 
@@ -384,10 +386,11 @@ async function explainCode() {
     
     // Clear chat history and set up first message
     currentSubmissionId = null;
+    let loadingText = github_url ? 'CodeMentor AI is fetching and analyzing the repository...' : 'CodeMentor AI is analyzing your code...';
     aiChatHistory.innerHTML = `
         <div class="chat-message ai-message">
             <div id="ai-response-content" class="ai-response-content">
-                <div class="ai-loading"><div class="spinner"></div><span>CodeMentor AI is analyzing your code...</span></div>
+                <div class="ai-loading"><div class="spinner"></div><span>${loadingText}</span></div>
             </div>
         </div>
     `;
@@ -400,7 +403,7 @@ async function explainCode() {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ language, code })
+            body: JSON.stringify({ language, code, github_url })
         });
 
         if (!response.ok) {
@@ -416,8 +419,8 @@ async function explainCode() {
         }
 
         // Initialize streaming response handling (SSE format)
-        aiContent.innerHTML = '';
         let explanationText = '';
+        let firstChunkReceived = false;
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
 
@@ -439,6 +442,10 @@ async function explainCode() {
                         }
                         
                         if (data.chunk) {
+                            if (!firstChunkReceived) {
+                                aiContent.innerHTML = '';
+                                firstChunkReceived = true;
+                            }
                             explanationText += data.chunk;
                             aiContent.innerHTML = marked.parse(explanationText);
                             aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
@@ -516,8 +523,8 @@ async function sendFollowUp() {
             return;
         }
 
-        aiContent.innerHTML = '';
         let answerText = '';
+        let firstChunkReceived = false;
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
 
@@ -538,6 +545,10 @@ async function sendFollowUp() {
                         }
                         
                         if (data.chunk) {
+                            if (!firstChunkReceived) {
+                                aiContent.innerHTML = '';
+                                firstChunkReceived = true;
+                            }
                             answerText += data.chunk;
                             aiContent.innerHTML = marked.parse(answerText);
                             aiChatHistory.scrollTop = aiChatHistory.scrollHeight;

@@ -1,0 +1,4 @@
+[flake8]
+ignore = E501, W291, W293, E302, E305, F401
+max-line-length = 150
+exclude = venv

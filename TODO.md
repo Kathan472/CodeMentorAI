@@ -34,16 +34,16 @@ This document outlines the sequential, atomic tasks required to build the CodeMe
 - [x] 25. **Frontend**: Implement JS logic to dynamically change the Monaco Editor syntax highlighting based on the selected language.
 
 ## Phase 4: AI Integration & Chat Interface
-- [ ] 26. **Backend**: Implement the `GeminiService` class in `services/gemini_service.py` to connect to the Gemini API.
-- [ ] 27. **Backend**: Create the 8 language-specific system prompt templates (focusing on line-by-line breakdown and analogies).
-- [ ] 28. **Backend**: Build the code explanation endpoint (`POST /api/chat/explain`). It must save to `submissions` and `chat_history` tables.
-- [ ] 29. **Backend**: Build the follow-up question endpoint (`POST /api/chat/followup`).
-- [ ] 30. **Frontend**: Add the "Submit Code" button and a loading/spinner UI state.
-- [ ] 31. **Frontend**: Build the Chat Interface HTML/CSS (Message container, AI/User message bubbles).
-- [ ] 32. **Frontend**: Implement JS logic to send code from Monaco Editor + selected language to the `/explain` endpoint.
-- [ ] 33. **Frontend**: Implement JS logic to parse the API response and render the AI's explanation in the chat interface.
-- [ ] 34. **Frontend**: Add a text input field and button for asking follow-up questions in the chat interface.
-- [ ] 35. **Frontend**: Implement JS logic to send follow-up questions to the `/followup` endpoint and append responses to the chat.
+- [x] 26. **Backend**: Implement the `GeminiService` class in `services/gemini_service.py` to connect to the Gemini API.
+- [x] 27. **Backend**: Create the 8 language-specific system prompt templates (focusing on line-by-line breakdown and analogies).
+- [x] 28. **Backend**: Build the code explanation endpoint (`POST /api/chat/explain`). It must save to `submissions` and `chat_history` tables.
+- [x] 29. **Backend**: Build the follow-up question endpoint (`POST /api/chat/followup`).
+- [x] 30. **Frontend**: Add the "Submit Code" button and a loading/spinner UI state.
+- [x] 31. **Frontend**: Build the Chat Interface HTML/CSS (Message container, AI/User message bubbles).
+- [x] 32. **Frontend**: Implement JS logic to send code from Monaco Editor + selected language to the `/explain` endpoint.
+- [x] 33. **Frontend**: Implement JS logic to parse the API response and render the AI's explanation in the chat interface.
+- [x] 34. **Frontend**: Add a text input field and button for asking follow-up questions in the chat interface.
+- [x] 35. **Frontend**: Implement JS logic to send follow-up questions to the `/followup` endpoint and append responses to the chat.
 
 ## Phase 5: Dashboard & History Tracking
 - [ ] 36. **Backend**: Build the user statistics endpoint (`GET /api/dashboard/stats`) to aggregate user submission data.

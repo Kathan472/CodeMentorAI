@@ -384,22 +384,28 @@ body {
 }
 
 .editor-wrapper {
-    max-width: 1100px;
+    max-width: 1500px;
     margin: 0 auto;
     display: flex;
-    flex-direction: column;
+    flex-wrap: nowrap;
     gap: 1.5rem;
+    align-items: flex-start;
 }
 
-/* ==========================================
-   EDITOR CARD
-   ========================================== */
 .editor-card {
+    flex: 1;
+    min-width: 0;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .editor-wrapper {
+        flex-direction: column;
+    }
 }
 
 /* Top bar */
@@ -446,6 +452,9 @@ body {
     flex: 1;
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
 }
 
 .language-select {
@@ -460,9 +469,35 @@ body {
     cursor: pointer;
     outline: none;
     transition: var(--transition);
-    min-width: 150px;
+    max-width: 150px;
 }
 .language-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.editor-divider {
+    color: var(--text-tertiary);
+    font-size: 0.88rem;
+    margin: 0 0.5rem;
+}
+
+.github-url-input {
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    font-weight: 500;
+    font-family: inherit;
+    outline: none;
+    transition: var(--transition);
+    width: 100%;
+    max-width: 250px;
+}
+
+.github-url-input:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
@@ -547,14 +582,22 @@ body {
 .output-content.output-loading { color: #E3B341; font-style: italic; }
 
 /* ==========================================
-   AI PANEL (Phase 4 placeholder)
+   AI PANEL
    ========================================== */
 .ai-panel {
+    width: 40%;
+    flex-shrink: 0;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+    .ai-panel {
+        width: 100%;
+    }
 }
 
 .ai-panel-header {
