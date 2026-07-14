@@ -1,9 +1,17 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZIPMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
 from dotenv import load_dotenv
+from app.database import engine
+from app import models
+import os
 
 load_dotenv()
+
+# Create database tables
+models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="CodeMentor AI",
@@ -11,17 +19,14 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS
+# CORS - allow same-origin requests from the browser
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://yourdomain.com", "*"],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Compression
-app.add_middleware(GZIPMiddleware, minimum_size=1000)
 
 # Import Routes
 from app.routes import auth
@@ -32,3 +37,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
+
+# Serve frontend static files
+frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
+app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
