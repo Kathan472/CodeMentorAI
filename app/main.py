@@ -29,12 +29,12 @@ app.add_middleware(
 )
 
 # Import Routes
-from app.routes import auth
-from app.routes import execute
+from app.routes import auth, execute, ai
 
 # Include Routes
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(execute.router, prefix="/api/code", tags=["Code Execution"])
+app.include_router(ai.router, prefix="/api/ai", tags=["AI"])
 
 @app.get("/health")
 async def health_check():

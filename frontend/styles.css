@@ -575,6 +575,9 @@ body {
 .ai-response-content {
     padding: 1.25rem;
     min-height: 100px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    font-size: 0.95rem;
 }
 
 .ai-placeholder {
@@ -582,6 +585,77 @@ body {
     font-style: italic;
     text-align: center;
     margin-top: 1rem;
+}
+
+.ai-error {
+    color: var(--color-error);
+    font-weight: 500;
+}
+
+/* AI Markdown Styles */
+.ai-response-content p {
+    margin-bottom: 1rem;
+}
+
+.ai-response-content strong {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.ai-response-content code {
+    background: var(--bg-tertiary);
+    padding: 0.2rem 0.4rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    color: var(--color-accent);
+}
+
+.ai-response-content pre {
+    background: #0D1117;
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.ai-response-content pre code {
+    background: transparent;
+    padding: 0;
+    color: #c9d1d9;
+}
+
+.ai-response-content ul, .ai-response-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.ai-response-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* AI Loading Spinner */
+.ai-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    color: var(--color-primary);
+    font-weight: 500;
+    margin-top: 1rem;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(37, 99, 235, 0.2);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }
 
 /* ==========================================

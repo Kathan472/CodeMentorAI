@@ -250,12 +250,10 @@ function initMonacoEditor() {
             });
         }
 
-        // Explain Code button (Phase 4 placeholder)
+        // Explain Code button
         const explainBtn = document.getElementById('explain-code-btn');
         if (explainBtn) {
-            explainBtn.addEventListener('click', () => {
-                setOutput('AI code explanation coming in Phase 4! Stay tuned.', 'loading');
-            });
+            explainBtn.addEventListener('click', explainCode);
         }
     });
 }
@@ -329,6 +327,84 @@ async function executeCode() {
             runBtn.disabled = false;
             runBtn.classList.remove('running');
             runBtn.innerHTML = '<span class="run-icon">▶</span> Run';
+        }
+    }
+}
+
+// ==========================================
+// AI CODE EXPLANATION
+// ==========================================
+async function explainCode() {
+    if (!monacoEditor) {
+        alert('Editor not initialized.');
+        return;
+    }
+
+    const code = monacoEditor.getValue();
+    const langSelect = document.getElementById('language-select');
+    const language = langSelect ? langSelect.value : 'python';
+    
+    if (!code.trim()) {
+        alert('Error: No code to explain. Please write some code first.');
+        return;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('You must be logged in to use the AI Code Explanation feature.');
+        openAuthModal();
+        return;
+    }
+
+    const explainBtn = document.getElementById('explain-code-btn');
+    const aiPanel = document.getElementById('ai-panel');
+    const aiContent = document.getElementById('ai-response-content');
+
+    // UI Updates: Disable button, show panel, show loading
+    if (explainBtn) {
+        explainBtn.disabled = true;
+        explainBtn.innerHTML = '⏳ Thinking...';
+    }
+    
+    if (aiPanel) aiPanel.classList.remove('hidden');
+    if (aiContent) aiContent.innerHTML = '<div class="ai-loading"><div class="spinner"></div><span>CodeMentor AI is analyzing your code...</span></div>';
+
+    try {
+        const response = await fetch(`${API_URL}/ai/explain`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ language, code })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                aiContent.innerHTML = `<p class="ai-error">Session expired. Please log in again.</p>`;
+                openAuthModal();
+            } else {
+                aiContent.innerHTML = `<p class="ai-error">Error: ${data.detail || 'Failed to explain code'}</p>`;
+            }
+            return;
+        }
+
+        if (data.success) {
+            // Use Marked.js to convert Markdown to HTML
+            const htmlContent = marked.parse(data.explanation);
+            aiContent.innerHTML = htmlContent;
+        } else {
+            aiContent.innerHTML = `<p class="ai-error">Error: Could not generate explanation.</p>`;
+        }
+    } catch (err) {
+        aiContent.innerHTML = `<p class="ai-error">Network Error: ${err.message}</p>`;
+    } finally {
+        if (explainBtn) {
+            explainBtn.disabled = false;
+            explainBtn.innerHTML = 'Explain Code';
         }
     }
 }
