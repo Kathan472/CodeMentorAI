@@ -26,12 +26,12 @@ This document outlines the sequential, atomic tasks required to build the CodeMe
 - [x] 19. **Frontend**: Write JS logic for the logout functionality (clearing the token and updating UI).
 
 ## Phase 3: Core UI Framework & Code Editor
-- [ ] 20. **Frontend**: Build the responsive Navigation Bar HTML (Brand, Links, Theme Toggle, Profile).
-- [ ] 21. **Frontend**: Define CSS variables for Light Mode and Dark Mode palettes (from `DESIGN.md`).
-- [ ] 22. **Frontend**: Implement JS logic for the Theme Toggle button to switch the `data-theme` attribute and save preference.
-- [ ] 23. **Frontend**: Integrate the Monaco Editor (or CodeMirror) via CDN into the main HTML container.
-- [ ] 24. **Frontend**: Build the HTML/CSS for the Language Selection dropdown (Python, JS, Java, C, C++, HTML, CSS, TS).
-- [ ] 25. **Frontend**: Implement JS logic to dynamically change the Monaco Editor syntax highlighting based on the selected language.
+- [x] 20. **Frontend**: Build the responsive Navigation Bar HTML (Brand, Links, Theme Toggle, Profile).
+- [x] 21. **Frontend**: Define CSS variables for Light Mode and Dark Mode palettes (from `DESIGN.md`).
+- [x] 22. **Frontend**: Implement JS logic for the Theme Toggle button to switch the `data-theme` attribute and save preference.
+- [x] 23. **Frontend**: Integrate the Monaco Editor (or CodeMirror) via CDN into the main HTML container.
+- [x] 24. **Frontend**: Build the HTML/CSS for the Language Selection dropdown (Python, JS, Java, C, C++, HTML, CSS, TS).
+- [x] 25. **Frontend**: Implement JS logic to dynamically change the Monaco Editor syntax highlighting based on the selected language.
 
 ## Phase 4: AI Integration & Chat Interface
 - [ ] 26. **Backend**: Implement the `GeminiService` class in `services/gemini_service.py` to connect to the Gemini API.

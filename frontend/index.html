@@ -4,34 +4,130 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeMentor AI - Your Intelligent Pair Programmer</title>
-    
-    <!-- SEO Meta Tags -->
     <meta name="description" content="AI-powered code explanation and mentoring platform. Get instant feedback, debugging help, and understand any codebase.">
     
     <!-- Modern Font: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
+    <!-- Navigation -->
     <nav class="navbar">
-        <div class="logo">CodeMentor AI</div>
-        <div class="nav-links">
+        <div class="navbar-brand">
+            <span class="brand-icon">⚡</span>
+            <span class="brand-text">CodeMentor AI</span>
+        </div>
+        <ul class="navbar-menu">
+            <li><a href="#editor-section" class="nav-link">Editor</a></li>
+            <li><a href="#history" class="nav-link">History</a></li>
+            <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+        </ul>
+        <div class="navbar-actions">
+            <button id="theme-toggle" class="btn btn-ghost theme-toggle" title="Toggle theme">
+                <span class="theme-icon">🌙</span>
+            </button>
             <button id="auth-btn" class="btn btn-primary">Login / Sign Up</button>
         </div>
     </nav>
 
+    <!-- Main App -->
     <div id="app-root">
+
+        <!-- Hero Section -->
         <header class="hero">
-            <h1>Master Any Codebase</h1>
-            <p>Paste your confusing code, and our AI will explain it instantly.</p>
+            <div class="hero-badge">✨ AI-Powered Code Mentor</div>
+            <h1 class="hero-title">Master Any Codebase</h1>
+            <p class="hero-subtitle">Paste your confusing code, and our AI will explain it instantly — line by line, in plain English.</p>
+            <div class="hero-stats">
+                <div class="stat-item"><span class="stat-number">17+</span><span class="stat-label">Languages</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat-item"><span class="stat-number">AI</span><span class="stat-label">Powered</span></div>
+                <div class="stat-divider"></div>
+                <div class="stat-item"><span class="stat-number">∞</span><span class="stat-label">Explanations</span></div>
+            </div>
         </header>
-        
-        <!-- Future Main App Interface goes here -->
+
+        <!-- Code Editor Section — centered, full-width experience -->
+        <section id="editor-section" class="editor-section">
+            <div class="editor-wrapper">
+
+                <!-- Editor Card -->
+                <div class="editor-card">
+
+                    <!-- Editor Top Bar -->
+                    <div class="editor-topbar">
+                        <div class="editor-topbar-left">
+                            <div class="editor-dots">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                            </div>
+                            <span class="editor-label">Code Editor</span>
+                        </div>
+                        <div class="editor-topbar-center">
+                            <select id="language-select" class="language-select">
+                                <option value="python">🐍 Python</option>
+                                <option value="javascript">📜 JavaScript</option>
+                                <option value="typescript">💙 TypeScript</option>
+                                <option value="java">☕ Java</option>
+                                <option value="c">⚙️ C</option>
+                                <option value="cpp">🔷 C++</option>
+                                <option value="csharp">💜 C#</option>
+                                <option value="go">🐹 Go</option>
+                                <option value="rust">🦀 Rust</option>
+                                <option value="ruby">💎 Ruby</option>
+                                <option value="php">🐘 PHP</option>
+                                <option value="swift">🍎 Swift</option>
+                                <option value="kotlin">🎯 Kotlin</option>
+                                <option value="sql">🗄️ SQL</option>
+                                <option value="html">🌐 HTML</option>
+                                <option value="css">🎨 CSS</option>
+                                <option value="json">📋 JSON</option>
+                            </select>
+                        </div>
+                        <div class="editor-topbar-right">
+                            <button id="clear-editor-btn" class="btn-toolbar btn-toolbar-ghost">Clear</button>
+                            <button id="run-code-btn" class="btn-toolbar btn-toolbar-run">
+                                <span class="run-icon">▶</span> Run
+                            </button>
+                            <button id="explain-code-btn" class="btn-toolbar btn-toolbar-primary">Explain Code</button>
+                        </div>
+                    </div>
+
+                    <!-- Monaco Editor -->
+                    <div id="editor-container"></div>
+
+                    <!-- Output Terminal -->
+                    <div id="output-pane" class="output-pane">
+                        <div class="output-header">
+                            <div class="output-header-left">
+                                <span class="output-dot"></span>
+                                <span>Terminal Output</span>
+                            </div>
+                            <button id="clear-output-btn" class="output-clear-btn">Clear</button>
+                        </div>
+                        <pre id="output-content" class="output-content">Ready. Press Run to execute your code.</pre>
+                    </div>
+                </div>
+
+                <!-- AI Response Panel (placeholder for Phase 4) -->
+                <div id="ai-panel" class="ai-panel hidden">
+                    <div class="ai-panel-header">
+                        <span class="ai-avatar">🤖</span>
+                        <span>CodeMentor AI</span>
+                    </div>
+                    <div id="ai-response-content" class="ai-response-content">
+                        <p class="ai-placeholder">Your AI explanation will appear here...</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
     </div>
 
     <!-- Auth Modal (Glassmorphism) -->
@@ -39,6 +135,7 @@
         <div class="modal-content glass-panel">
             <button class="close-btn" id="close-modal-btn" onclick="closeAuthModal()">&times;</button>
             <div class="modal-header">
+                <div class="modal-icon">⚡</div>
                 <h2 id="modal-title">Welcome Back</h2>
                 <div class="auth-tabs">
                     <button id="tab-login" class="tab active" onclick="switchAuthTab('login')">Login</button>
@@ -70,7 +167,13 @@
         </div>
     </div>
 
+    <!-- Monaco Editor Loader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+    <script>
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+    </script>
+    
     <!-- Custom JavaScript -->
-    <script src="app.js"></script>
+    <script src="app.js?v=8"></script>
 </body>
 </html>
