@@ -41,14 +41,53 @@ class GeminiService:
         )
 
         try:
-            # 3. Call the API asynchronously
-            # (In older SDKs, we might use run_in_executor if no async support is present, 
-            # but generate_content_async is supported in newer google-generativeai versions)
             response = await self.model.generate_content_async(full_prompt)
-            
             return response.text
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Gemini API Error: {str(e)}")
+
+    async def explain_code_stream(self, language: str, code: str):
+        """
+        Streams the explanation from the Gemini API chunk by chunk.
+        """
+        if not self.configured:
+            yield "Gemini API is not configured. Please add a valid GEMINI_API_KEY to your .env file."
+            return
+
+        system_instruction = get_prompt_for_language(language)
+        full_prompt = (
+            f"SYSTEM INSTRUCTION:\n{system_instruction}\n\n"
+            f"USER CODE (Language: {language}):\n```\n{code}\n```\n\n"
+            f"Please explain the code above following the formatting rules in the SYSTEM INSTRUCTION."
+        )
+
+        try:
+            response = await self.model.generate_content_async(full_prompt, stream=True)
+            async for chunk in response:
+                yield chunk.text
+        except Exception as e:
+            yield f"\n\n**Error from Gemini API:** {str(e)}"
+
+    async def followup_stream(self, context: str, question: str):
+        """
+        Streams a follow-up answer using the provided conversation context.
+        """
+        if not self.configured:
+            yield "Gemini API is not configured. Please add a valid GEMINI_API_KEY to your .env file."
+            return
+            
+        full_prompt = (
+            f"{context}\n"
+            f"User's Follow-up Question: {question}\n\n"
+            f"Please answer the user's question clearly and concisely. Format using Markdown."
+        )
+        
+        try:
+            response = await self.model.generate_content_async(full_prompt, stream=True)
+            async for chunk in response:
+                yield chunk.text
+        except Exception as e:
+            yield f"\n\n**Error from Gemini API:** {str(e)}"
 
 # Create a singleton instance to be used across the app
 gemini_service = GeminiService()

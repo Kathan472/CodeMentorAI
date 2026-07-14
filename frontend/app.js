@@ -255,6 +255,16 @@ function initMonacoEditor() {
         if (explainBtn) {
             explainBtn.addEventListener('click', explainCode);
         }
+
+        // Follow-up Input logic
+        const sendFollowupBtn = document.getElementById('send-followup-btn');
+        const followupInput = document.getElementById('followup-input');
+        if (sendFollowupBtn && followupInput) {
+            sendFollowupBtn.addEventListener('click', sendFollowUp);
+            followupInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendFollowUp();
+            });
+        }
     });
 }
 
@@ -332,8 +342,10 @@ async function executeCode() {
 }
 
 // ==========================================
-// AI CODE EXPLANATION
+// AI CHAT & CODE EXPLANATION
 // ==========================================
+let currentSubmissionId = null;
+
 async function explainCode() {
     if (!monacoEditor) {
         alert('Editor not initialized.');
@@ -358,7 +370,8 @@ async function explainCode() {
 
     const explainBtn = document.getElementById('explain-code-btn');
     const aiPanel = document.getElementById('ai-panel');
-    const aiContent = document.getElementById('ai-response-content');
+    const aiChatHistory = document.getElementById('ai-chat-history');
+    const aiChatInputContainer = document.getElementById('ai-chat-input-container');
 
     // UI Updates: Disable button, show panel, show loading
     if (explainBtn) {
@@ -367,10 +380,21 @@ async function explainCode() {
     }
     
     if (aiPanel) aiPanel.classList.remove('hidden');
-    if (aiContent) aiContent.innerHTML = '<div class="ai-loading"><div class="spinner"></div><span>CodeMentor AI is analyzing your code...</span></div>';
+    if (aiChatInputContainer) aiChatInputContainer.classList.add('hidden'); // Hide input until initial explanation is done
+    
+    // Clear chat history and set up first message
+    currentSubmissionId = null;
+    aiChatHistory.innerHTML = `
+        <div class="chat-message ai-message">
+            <div id="ai-response-content" class="ai-response-content">
+                <div class="ai-loading"><div class="spinner"></div><span>CodeMentor AI is analyzing your code...</span></div>
+            </div>
+        </div>
+    `;
+    const aiContent = document.getElementById('ai-response-content');
 
     try {
-        const response = await fetch(`${API_URL}/ai/explain`, {
+        const response = await fetch(`${API_URL}/chat/explain`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -379,26 +403,56 @@ async function explainCode() {
             body: JSON.stringify({ language, code })
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
             if (response.status === 401) {
                 localStorage.removeItem('token');
                 aiContent.innerHTML = `<p class="ai-error">Session expired. Please log in again.</p>`;
                 openAuthModal();
             } else {
-                aiContent.innerHTML = `<p class="ai-error">Error: ${data.detail || 'Failed to explain code'}</p>`;
+                aiContent.innerHTML = `<p class="ai-error">Error: ${errorData.detail || 'Failed to explain code'}</p>`;
             }
             return;
         }
 
-        if (data.success) {
-            // Use Marked.js to convert Markdown to HTML
-            const htmlContent = marked.parse(data.explanation);
-            aiContent.innerHTML = htmlContent;
-        } else {
-            aiContent.innerHTML = `<p class="ai-error">Error: Could not generate explanation.</p>`;
+        // Initialize streaming response handling (SSE format)
+        aiContent.innerHTML = '';
+        let explanationText = '';
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            
+            const chunkStr = decoder.decode(value, { stream: true });
+            
+            // SSE chunks look like: data: {"chunk": "..."}\n\n
+            const lines = chunkStr.split('\n');
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(line.substring(6));
+                        
+                        if (data.submission_id) {
+                            currentSubmissionId = data.submission_id;
+                        }
+                        
+                        if (data.chunk) {
+                            explanationText += data.chunk;
+                            aiContent.innerHTML = marked.parse(explanationText);
+                            aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing SSE JSON:", e, line);
+                    }
+                }
+            }
         }
+        
+        // Show follow-up input
+        if (aiChatInputContainer) aiChatInputContainer.classList.remove('hidden');
+        
     } catch (err) {
         aiContent.innerHTML = `<p class="ai-error">Network Error: ${err.message}</p>`;
     } finally {
@@ -406,6 +460,100 @@ async function explainCode() {
             explainBtn.disabled = false;
             explainBtn.innerHTML = 'Explain Code';
         }
+    }
+}
+
+async function sendFollowUp() {
+    const inputEl = document.getElementById('followup-input');
+    const sendBtn = document.getElementById('send-followup-btn');
+    const aiChatHistory = document.getElementById('ai-chat-history');
+    const question = inputEl.value.trim();
+
+    if (!question || !currentSubmissionId) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    // 1. Add User Message to UI
+    inputEl.value = '';
+    inputEl.disabled = true;
+    sendBtn.disabled = true;
+
+    aiChatHistory.insertAdjacentHTML('beforeend', `
+        <div class="chat-message user-message">
+            ${question}
+        </div>
+    `);
+    
+    // Create AI response placeholder
+    const aiMessageId = 'ai-msg-' + Date.now();
+    aiChatHistory.insertAdjacentHTML('beforeend', `
+        <div class="chat-message ai-message">
+            <div id="${aiMessageId}" class="ai-response-content">
+                <div class="ai-loading"><div class="spinner"></div><span>Thinking...</span></div>
+            </div>
+        </div>
+    `);
+    aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
+    
+    const aiContent = document.getElementById(aiMessageId);
+
+    try {
+        const response = await fetch(`${API_URL}/chat/followup`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                submission_id: currentSubmissionId, 
+                question: question 
+            })
+        });
+
+        if (!response.ok) {
+            aiContent.innerHTML = `<p class="ai-error">Failed to send message.</p>`;
+            return;
+        }
+
+        aiContent.innerHTML = '';
+        let answerText = '';
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            
+            const chunkStr = decoder.decode(value, { stream: true });
+            const lines = chunkStr.split('\n');
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    try {
+                        const data = JSON.parse(line.substring(6));
+                        
+                        if (data.error) {
+                            aiContent.innerHTML = `<p class="ai-error">${data.error}</p>`;
+                            return;
+                        }
+                        
+                        if (data.chunk) {
+                            answerText += data.chunk;
+                            aiContent.innerHTML = marked.parse(answerText);
+                            aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
+                        }
+                    } catch (e) {
+                        console.error("Error parsing SSE JSON:", e, line);
+                    }
+                }
+            }
+        }
+    } catch (err) {
+        aiContent.innerHTML = `<p class="ai-error">Network Error: ${err.message}</p>`;
+    } finally {
+        inputEl.disabled = false;
+        sendBtn.disabled = false;
+        inputEl.focus();
     }
 }
 

@@ -568,16 +568,96 @@ body {
     font-size: 0.9rem;
 }
 
+.ai-chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 500px;
+}
+
+.chat-message {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.ai-message {
+    background: transparent;
+    border-left: 3px solid var(--color-primary);
+    padding-left: 1rem;
+}
+
+.user-message {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-lg);
+    align-self: flex-end;
+    max-width: 85%;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.ai-chat-input-container {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    display: flex;
+    gap: 0.5rem;
+}
+
+#followup-input {
+    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: var(--transition);
+}
+
+#followup-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.send-btn {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.send-btn:hover {
+    background: var(--color-primary-hover);
+    transform: scale(1.05);
+}
+
+.send-btn:disabled {
+    background: var(--text-tertiary);
+    cursor: not-allowed;
+    transform: none;
+}
+
 .ai-avatar {
     font-size: 1.25rem;
 }
 
 .ai-response-content {
-    padding: 1.25rem;
-    min-height: 100px;
-    line-height: 1.6;
+    /* Styles for markdown content in AI messages */
     color: var(--text-primary);
-    font-size: 0.95rem;
 }
 
 .ai-placeholder {

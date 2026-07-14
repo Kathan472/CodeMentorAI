@@ -116,14 +116,28 @@
                     </div>
                 </div>
 
-                <!-- AI Response Panel (placeholder for Phase 4) -->
+                <!-- AI Response Panel -->
                 <div id="ai-panel" class="ai-panel hidden">
                     <div class="ai-panel-header">
                         <span class="ai-avatar">🤖</span>
                         <span>CodeMentor AI</span>
                     </div>
-                    <div id="ai-response-content" class="ai-response-content">
-                        <p class="ai-placeholder">Your AI explanation will appear here...</p>
+                    
+                    <div id="ai-chat-history" class="ai-chat-history">
+                        <!-- Initial Explanation will live here -->
+                        <div class="chat-message ai-message">
+                            <div id="ai-response-content" class="ai-response-content">
+                                <p class="ai-placeholder">Your AI explanation will appear here...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Follow-up Input -->
+                    <div id="ai-chat-input-container" class="ai-chat-input-container hidden">
+                        <input type="text" id="followup-input" placeholder="Ask a follow-up question..." autocomplete="off">
+                        <button id="send-followup-btn" class="send-btn">
+                            <span class="send-icon">↑</span>
+                        </button>
                     </div>
                 </div>
 
@@ -175,6 +189,6 @@
     </script>
     
     <!-- Custom JavaScript -->
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=14"></script>
 </body>
 </html>

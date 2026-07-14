@@ -23,3 +23,11 @@ class UserResponse(BaseModel):
     
     class Config:
         from_attributes = True
+
+class ExplainRequest(BaseModel):
+    language: str
+    code: str
+
+class FollowUpRequest(BaseModel):
+    submission_id: int
+    question: str
