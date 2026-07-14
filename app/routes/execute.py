@@ -20,7 +20,8 @@ COMPILER_MAP = {
     "php":        "php-8.3.12",
     "swift":      None,   # Wandbox Swift is broken server-side
     "kotlin":     None,   # Kotlin not on Wandbox
-    "sql":        "sqlite-3.46.1",
+    "sqlite":     "sqlite-3.46.1",
+    "postgresql": None,   # PostgreSQL not on Wandbox
 }
 
 NON_EXECUTABLE = {"html", "css", "json", "markdown", "yaml"}

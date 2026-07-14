@@ -117,47 +117,20 @@ greet("World")
     println("Hello, $name! Welcome to CodeMentor AI!")
 }
 `,
-    sql:
-`-- Welcome to CodeMentor AI SQL Editor
+    sqlite:
+`-- Welcome to CodeMentor AI SQLite Editor
 -- SQLite syntax: use single quotes for strings
 
 SELECT
     'Hello, World!' AS greeting,
     'Welcome to CodeMentor AI!' AS message;
 `,
-    html:
-`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>CodeMentor AI</title>
-</head>
-<body>
-    <h1>Hello, World!</h1>
-    <p>Welcome to CodeMentor AI!</p>
-</body>
-</html>
-`,
-    css:
-`/* CodeMentor AI CSS Example */
-body {
-    font-family: sans-serif;
-    background-color: #f3f4f6;
-    color: #111827;
-    margin: 0;
-    padding: 2rem;
-}
+    postgresql:
+`-- Welcome to CodeMentor AI PostgreSQL Editor
 
-h1 {
-    color: #2563eb;
-}
-`,
-    json:
-`{
-    "greeting": "Hello, World!",
-    "platform": "CodeMentor AI",
-    "features": ["Code Explanation", "AI Chat", "Multi-language Support"]
-}
+SELECT 
+    'Hello, PostgreSQL!' AS greeting,
+    current_date AS today;
 `
 };
 
@@ -236,10 +209,8 @@ function initMonacoEditor() {
                     'php':        'php',
                     'swift':      'swift',
                     'kotlin':     'kotlin',
-                    'sql':        'sql',
-                    'html':       'html',
-                    'css':        'css',
-                    'json':       'json',
+                    'sqlite':     'sql',
+                    'postgresql': 'pgsql',
                 };
                 const monacoLang = monacoLangMap[newLang] || newLang;
 
@@ -318,12 +289,8 @@ async function executeCode() {
         return;
     }
 
-    // Non-executable languages
-    const nonExecutable = ['html', 'css', 'json', 'markdown', 'yaml'];
-    if (nonExecutable.includes(language)) {
-        setOutput(`ℹ️  ${language.toUpperCase()} is a markup/config language and cannot be executed.\nPaste it and use "Explain Code" instead!`, 'loading');
-        return;
-    }
+    // Disabled specific client-side checks for non-exec since we rely on backend
+    // and we removed the HTML/CSS options.
 
     // Disable button while running
     if (runBtn) {
