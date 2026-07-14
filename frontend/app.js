@@ -4,6 +4,7 @@
 
 let currentAuthMode = 'login';
 let monacoEditor = null;
+let currentLanguage = 'python';  // tracks the active language
 const API_URL = '/api';
 
 // ==========================================
@@ -118,7 +119,7 @@ greet("World")
 `,
     sql:
 `-- Welcome to CodeMentor AI SQL Editor
--- Paste your confusing SQL query below:
+-- SQLite syntax: use single quotes for strings
 
 SELECT
     'Hello, World!' AS greeting,
@@ -214,29 +215,46 @@ function initMonacoEditor() {
             smoothScrolling: true,
         });
 
-        // Language change → update syntax & starter code
+        // Language change → ALWAYS load starter code for the new language
         const langSelect = document.getElementById('language-select');
         if (langSelect) {
             langSelect.addEventListener('change', (e) => {
                 const newLang = e.target.value;
-                const currentVal = monacoEditor.getValue();
 
-                // Map language value to monaco language ID
+                // Map our language keys to Monaco language IDs
                 const monacoLangMap = {
-                    'cpp': 'cpp',
-                    'csharp': 'csharp',
+                    'python':     'python',
+                    'javascript': 'javascript',
+                    'typescript': 'typescript',
+                    'java':       'java',
+                    'c':          'c',
+                    'cpp':        'cpp',
+                    'csharp':     'csharp',
+                    'go':         'go',
+                    'rust':       'rust',
+                    'ruby':       'ruby',
+                    'php':        'php',
+                    'swift':      'swift',
+                    'kotlin':     'kotlin',
+                    'sql':        'sql',
+                    'html':       'html',
+                    'css':        'css',
+                    'json':       'json',
                 };
                 const monacoLang = monacoLangMap[newLang] || newLang;
 
+                // Always: update Monaco syntax highlighting
                 monaco.editor.setModelLanguage(monacoEditor.getModel(), monacoLang);
 
-                // Replace with starter code only if editor has default/empty content
-                const isDefault = currentVal.trim() === '' ||
-                    Object.values(starterCode).some(s => s.trim() === currentVal.trim());
-
-                if (isDefault && starterCode[newLang]) {
+                // Always: load starter code for the new language
+                if (starterCode[newLang]) {
                     monacoEditor.setValue(starterCode[newLang]);
                 }
+
+                currentLanguage = newLang;
+
+                // Reset output terminal
+                setOutput('Ready. Press Run to execute your code.', 'default');
             });
         }
 
