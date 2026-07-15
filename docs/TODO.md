@@ -1,6 +1,6 @@
 # CodeMentorAI - Project Todo List
 
-This document outlines the sequential, atomic tasks required to build the CodeMentorAI MVP. The tech stack is **HTML/CSS/Vanilla JS** (Frontend) and **Python/FastAPI/MySQL** (Backend) using the **Gemini API**. The list is structured to ensure no overlapping dependencies, meaning each task can be completed one after the other.
+This document outlines the sequential, atomic tasks required to build the CodeMentorAI MVP. The tech stack is **HTML/CSS/Vanilla JS** (Frontend) and **Python/FastAPI/MySQL** (Backend) using the **Multi-Model AI API**. The list is structured to ensure no overlapping dependencies, meaning each task can be completed one after the other.
 
 ## Phase 1: Project Setup & Infrastructure
 - [x] 1. Initialize a new Git repository for the project (monorepo or split frontend/backend).
@@ -34,7 +34,7 @@ This document outlines the sequential, atomic tasks required to build the CodeMe
 - [x] 25. **Frontend**: Implement JS logic to dynamically change the Monaco Editor syntax highlighting based on the selected language.
 
 ## Phase 4: AI Integration & Chat Interface
-- [x] 26. **Backend**: Implement the `GeminiService` class in `services/gemini_service.py` to connect to the Gemini API.
+- [x] 26. **Backend**: Implement the `Multi-Model AIService` class in `services/gemini_service.py` to connect to the Multi-Model AI API.
 - [x] 27. **Backend**: Create the 8 language-specific system prompt templates (focusing on line-by-line breakdown and analogies).
 - [x] 28. **Backend**: Build the code explanation endpoint (`POST /api/chat/explain`). It must save to `submissions` and `chat_history` tables.
 - [x] 29. **Backend**: Build the follow-up question endpoint (`POST /api/chat/followup`).

@@ -34,7 +34,30 @@
             <button id="theme-toggle" class="btn btn-ghost theme-toggle" title="Toggle theme">
                 <span class="theme-icon">🌙</span>
             </button>
-            <button id="auth-btn" class="btn btn-primary">Login / Sign Up</button>
+            
+            <!-- Auth Buttons (visible when logged out) -->
+            <div id="auth-buttons-container">
+                <button id="login-btn" class="btn btn-ghost" onclick="openAuthModal('login')">Login</button>
+                <button id="signup-btn" class="btn btn-primary" onclick="openAuthModal('signup')">Sign Up</button>
+            </div>
+            
+            <!-- User Profile Dropdown (visible when logged in) -->
+            <div id="user-profile-container" class="hidden">
+                <div class="avatar-dropdown">
+                    <button id="avatar-btn" class="avatar-btn">
+                        <span class="avatar-icon">👤</span>
+                    </button>
+                    <div id="dropdown-menu" class="dropdown-menu hidden">
+                        <div class="dropdown-header">
+                            <span id="dropdown-email" class="user-email">user@example.com</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <button id="logout-btn" class="dropdown-item logout-item">
+                            <span class="logout-icon">🚪</span> Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -44,55 +67,67 @@
         <!-- Hero Section -->
         <header class="hero">
             <div class="hero-badge">✨ AI-Powered Code Mentor</div>
-            <h1 class="hero-title">Master Any Codebase</h1>
-            <p class="hero-subtitle">Paste your confusing code, and our AI will explain it instantly — line by line, in plain English.</p>
-            <div class="hero-stats">
-                <div class="stat-item"><span class="stat-number">17+</span><span class="stat-label">Languages</span></div>
-                <div class="stat-divider"></div>
-                <div class="stat-item"><span class="stat-number">AI</span><span class="stat-label">Powered</span></div>
-                <div class="stat-divider"></div>
-                <div class="stat-item"><span class="stat-number">∞</span><span class="stat-label">Explanations</span></div>
+            <h1>Master Any Codebase</h1>
+            <p>Paste your confusing code or github repository URL, and our AI will explain it instantly — line by line, in plain English.</p>
+            <div class="features-row">
+                <div class="feature-item">
+                    <span class="feature-number">11</span>
+                    <span class="feature-label">LANGUAGES</span>
+                </div>
+                <div class="feature-divider"></div>
+                <div class="feature-item">
+                    <span class="feature-number">AI</span>
+                    <span class="feature-label">POWERED</span>
+                </div>
+                <div class="feature-divider"></div>
+                <div class="feature-item">
+                    <span class="feature-number">∞</span>
+                    <span class="feature-label">EXPLANATIONS</span>
+                </div>
             </div>
         </header>
 
-        <!-- Code Editor Section — centered, full-width experience -->
+        <!-- Editor Section -->
         <section id="editor-section" class="editor-section">
             <div class="editor-wrapper">
 
                 <!-- Editor Card -->
                 <div class="editor-card">
-
                     <!-- Editor Top Bar -->
                     <div class="editor-topbar">
                         <div class="editor-topbar-left">
-                            <div class="editor-dots">
+                            <div class="mac-dots">
                                 <span class="dot red"></span>
                                 <span class="dot yellow"></span>
                                 <span class="dot green"></span>
                             </div>
-                            <span class="editor-label">Code Editor</span>
+                            <span class="editor-label">CODE EDITOR</span>
                         </div>
+                        
                         <div class="editor-topbar-center">
-                            <select id="language-select" class="language-select">
-                                <option value="python">🐍 Python</option>
-                                <option value="javascript">📜 JavaScript</option>
-                                <option value="typescript">💙 TypeScript</option>
-                                <option value="java">☕ Java</option>
-                                <option value="c">⚙️ C</option>
-                                <option value="cpp">🔷 C++</option>
-                                <option value="csharp">💜 C#</option>
-                                <option value="go">🐹 Go</option>
-                                <option value="rust">🦀 Rust</option>
-                                <option value="ruby">💎 Ruby</option>
-                                <option value="php">🐘 PHP</option>
-                                <option value="swift">🍎 Swift</option>
-                                <option value="kotlin">🎯 Kotlin</option>
-                                <option value="sqlite">🗄️ SQLite</option>
-                                <option value="postgresql">🐘 PostgreSQL</option>
-                            </select>
-                            <span class="editor-divider">or</span>
-                            <input type="text" id="github-url-input" class="github-url-input" placeholder="Paste GitHub Repo URL (e.g., https://github.com/user/repo)" autocomplete="off">
+                            <div class="language-selector">
+                                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" id="lang-icon" alt="Lang" class="lang-icon">
+                                <select id="language-select">
+                                    <option value="python">Python</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="typescript">TypeScript</option>
+                                    <option value="java">Java</option>
+                                    <option value="c">C</option>
+                                    <option value="cpp">C++</option>
+                                    <option value="csharp">C#</option>
+                                    <option value="go">Go</option>
+                                    <option value="rust">Rust</option>
+                                    <option value="ruby">Ruby</option>
+                                    <option value="php">PHP</option>
+                                </select>
+                            </div>
+                            <span class="or-divider">or</span>
+                            <div class="github-url-input-container">
+                                <span class="github-icon">🔗</span>
+                                <input type="text" id="github-url-input" class="github-url-input" placeholder="Paste GitHub Repo URL (e.g., https://github.com/user/repo)" />
+                            </div>
                         </div>
+
                         <div class="editor-topbar-right">
                             <button id="clear-editor-btn" class="btn-toolbar btn-toolbar-ghost">Clear</button>
                             <button id="run-code-btn" class="btn-toolbar btn-toolbar-run">
@@ -103,49 +138,88 @@
                     </div>
 
                     <!-- Monaco Editor -->
-                    <div id="editor-container"></div>
-
-                    <!-- Output Terminal -->
-                    <div id="output-pane" class="output-pane">
-                        <div class="output-header">
-                            <div class="output-header-left">
-                                <span class="output-dot"></span>
-                                <span>Terminal Output</span>
-                            </div>
-                            <button id="clear-output-btn" class="output-clear-btn">Clear</button>
+                    <div id="editor-container" class="editor-container"></div>
+                    
+                    <!-- Standard Input -->
+                <div class="stdin-container">
+                    <div class="terminal-header" style="border-top: none; border-bottom: 1px solid #334155;">
+                        <div class="terminal-title" style="color: #94a3b8; font-size: 0.75rem;">
+                            STANDARD INPUT (Optional)
                         </div>
+                    </div>
+                    <textarea id="stdin-input" class="stdin-input" placeholder="Enter input for programs like C++ cin, Python input(), etc..."></textarea>
+                </div>
+
+                <!-- Terminal Output -->
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <div class="terminal-title">
+                            <span class="terminal-icon">●</span>
+                            TERMINAL OUTPUT
+                        </div>
+                        <button id="clear-btn" class="clear-btn">Clear</button>
+                    </div>
+                    <div id="output-pane" class="output-pane">
                         <pre id="output-content" class="output-content">Ready. Press Run to execute your code.</pre>
                     </div>
                 </div>
+            </div> <!-- End of editor-card -->
 
-                <!-- AI Response Panel -->
-                <div id="ai-panel" class="ai-panel hidden">
-                    <div class="ai-panel-header">
-                        <span class="ai-avatar">🤖</span>
-                        <span>CodeMentor AI</span>
+            <!-- AI Explanation Panel (Side-by-Side) -->
+            <div id="ai-panel" class="ai-panel hidden">
+                <div class="ai-panel-header">
+                    <span class="ai-title">✨ CodeMentor AI Explanation</span>
+                    <button id="close-ai-btn" class="close-btn">×</button>
+                </div>
+                <div class="ai-panel-body ai-chat-history" id="ai-chat-history">
+                    <!-- Chat history and latest response will be injected here -->
+                </div>
+                
+                <!-- Follow-up input container -->
+                <div class="ai-chat-input-container hidden" id="ai-chat-input-container">
+                    <input type="text" id="followup-input" placeholder="Ask a follow-up question about this code..." class="followup-input" />
+                    <button id="send-followup-btn" class="send-btn">
+                        <span class="send-icon">↑</span>
+                    </button>
+                </div>
+            </div>
+
+        </div> <!-- End of editor-workspace -->
+    </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="dashboard-section hidden" style="display: none;">
+            <div class="dashboard-container">
+                <h2>Your Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Code Snippets Analyzed</h3>
+                        <p id="stat-total-submissions">0</p>
                     </div>
-                    
-                    <div id="ai-chat-history" class="ai-chat-history">
-                        <!-- Initial Explanation will live here -->
-                        <div class="chat-message ai-message">
-                            <div id="ai-response-content" class="ai-response-content">
-                                <p class="ai-placeholder">Your AI explanation will appear here...</p>
-                            </div>
-                        </div>
+                    <div class="stat-card">
+                        <h3>Total Explanations</h3>
+                        <p id="stat-total-explanations">0</p>
                     </div>
-                    
-                    <!-- Follow-up Input -->
-                    <div id="ai-chat-input-container" class="ai-chat-input-container hidden">
-                        <input type="text" id="followup-input" placeholder="Ask a follow-up question..." autocomplete="off">
-                        <button id="send-followup-btn" class="send-btn">
-                            <span class="send-icon">↑</span>
-                        </button>
+                    <div class="stat-card">
+                        <h3>Languages Explored</h3>
+                        <p id="stat-languages">-</p>
                     </div>
                 </div>
-
             </div>
         </section>
-    </div>
+
+        <!-- History Section -->
+        <section id="history-section" class="dashboard-section hidden" style="display: none;">
+            <div class="dashboard-container">
+                <div class="history-container">
+                    <h2>Your Past Explanations</h2>
+                    <ul id="history-list" class="history-list">
+                        <!-- History items will be injected here -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div> <!-- End of app-root -->
 
     <!-- Auth Modal (Glassmorphism) -->
     <div id="auth-modal" class="modal-overlay hidden">
@@ -191,6 +265,6 @@
     </script>
     
     <!-- Custom JavaScript -->
-    <script src="app.js?v=14"></script>
+    <script src="app.js?v=20"></script>
 </body>
 </html>

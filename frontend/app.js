@@ -4,6 +4,32 @@
 
 let currentAuthMode = 'login';
 let monacoEditor = null;
+window.updateLangIcon = function(newLang) {
+    const langIcon = document.getElementById('lang-icon');
+    if (langIcon) {
+        const deviconMap = {
+            'python': 'python/python-original.svg',
+            'javascript': 'javascript/javascript-original.svg',
+            'typescript': 'typescript/typescript-original.svg',
+            'html': 'html5/html5-original.svg',
+            'css': 'css3/css3-original.svg',
+            'java': 'java/java-original.svg',
+            'c': 'c/c-original.svg',
+            'cpp': 'cplusplus/cplusplus-original.svg',
+            'csharp': 'csharp/csharp-original.svg',
+            'go': 'go/go-original.svg',
+            'rust': 'rust/rust-original.svg',
+            'ruby': 'ruby/ruby-original.svg',
+            'php': 'php/php-original.svg',
+            'swift': 'swift/swift-original.svg',
+            'kotlin': 'kotlin/kotlin-original.svg',
+            'shell': 'bash/bash-original.svg'
+        };
+        const iconPath = deviconMap[newLang] || 'devicon/devicon-original.svg';
+        langIcon.src = `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${iconPath}`;
+    }
+};
+
 let currentLanguage = 'python';  // tracks the active language
 const API_URL = '/api';
 
@@ -116,21 +142,6 @@ greet("World")
     val name = "World"
     println("Hello, $name! Welcome to CodeMentor AI!")
 }
-`,
-    sqlite:
-`-- Welcome to CodeMentor AI SQLite Editor
--- SQLite syntax: use single quotes for strings
-
-SELECT
-    'Hello, World!' AS greeting,
-    'Welcome to CodeMentor AI!' AS message;
-`,
-    postgresql:
-`-- Welcome to CodeMentor AI PostgreSQL Editor
-
-SELECT 
-    'Hello, PostgreSQL!' AS greeting,
-    current_date AS today;
 `
 };
 
@@ -209,8 +220,7 @@ function initMonacoEditor() {
                     'php':        'php',
                     'swift':      'swift',
                     'kotlin':     'kotlin',
-                    'sqlite':     'sql',
-                    'postgresql': 'pgsql',
+                    'shell':      'shell',
                 };
                 const monacoLang = monacoLangMap[newLang] || newLang;
 
@@ -226,6 +236,12 @@ function initMonacoEditor() {
 
                 // Reset output terminal
                 setOutput('Ready. Press Run to execute your code.', 'default');
+                             // Update language icon
+                if (typeof window.updateLangIcon === 'function') {
+                    window.updateLangIcon(newLang);
+                }
+                
+                // Clear AI chat and code snippet memory when switching languages manually
             });
         }
 
@@ -254,6 +270,23 @@ function initMonacoEditor() {
         const explainBtn = document.getElementById('explain-code-btn');
         if (explainBtn) {
             explainBtn.addEventListener('click', explainCode);
+        }
+
+        // Close AI Panel button
+        const closeAiBtn = document.getElementById('close-ai-btn');
+        if (closeAiBtn) {
+            closeAiBtn.addEventListener('click', () => {
+                const aiPanel = document.getElementById('ai-panel');
+                if (aiPanel) aiPanel.classList.add('hidden');
+            });
+        }
+
+        // Terminal Clear button
+        const clearTermBtn = document.getElementById('clear-btn');
+        if (clearTermBtn) {
+            clearTermBtn.addEventListener('click', () => {
+                setOutput('Ready. Press Run to execute your code.', 'default');
+            });
         }
 
         // Follow-up Input logic
@@ -291,6 +324,8 @@ async function executeCode() {
     const langSelect = document.getElementById('language-select');
     const language = langSelect ? langSelect.value : 'python';
     const runBtn = document.getElementById('run-code-btn');
+    const stdinEl = document.getElementById('stdin-input');
+    const stdin = stdinEl ? stdinEl.value : '';
 
     if (!code.trim()) {
         setOutput('Error: No code to execute. Please write some code first.', 'error');
@@ -312,7 +347,7 @@ async function executeCode() {
         const response = await fetch(`${API_URL}/code/execute`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ language, code })
+            body: JSON.stringify({ language, code, stdin })
         });
 
         const data = await response.json();
@@ -441,6 +476,14 @@ async function explainCode() {
                             currentSubmissionId = data.submission_id;
                         }
                         
+                        if (data.error) {
+                            if (!firstChunkReceived) {
+                                aiContent.innerHTML = '';
+                                firstChunkReceived = true;
+                            }
+                            aiContent.innerHTML += `<p class="ai-error" style="color: #ef4444; margin-top: 10px;">Error: ${data.error}</p>`;
+                        }
+
                         if (data.chunk) {
                             if (!firstChunkReceived) {
                                 aiContent.innerHTML = '';
@@ -467,6 +510,8 @@ async function explainCode() {
             explainBtn.disabled = false;
             explainBtn.innerHTML = 'Explain Code';
         }
+        // Refresh dashboard stats so explanations increment in UI immediately
+        loadDashboard();
     }
 }
 
@@ -601,7 +646,8 @@ function updateThemeIcon(theme) {
 // ==========================================
 // AUTH MODAL
 // ==========================================
-function openAuthModal() {
+function openAuthModal(mode = 'login') {
+    switchAuthTab(mode);
     document.getElementById('auth-modal').classList.remove('hidden');
     document.getElementById('auth-error').classList.add('hidden');
 }
@@ -635,26 +681,75 @@ function switchAuthTab(mode) {
 // ==========================================
 // AUTH STATUS (Logged in / out)
 // ==========================================
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch(e) {
+        return null;
+    }
+}
+
 function checkAuthStatus() {
     const token = localStorage.getItem('token');
-    const authBtn = document.getElementById('auth-btn');
-    if (!authBtn) return;
+    const authButtonsContainer = document.getElementById('auth-buttons-container');
+    const userProfileContainer = document.getElementById('user-profile-container');
+    const dropdownEmail = document.getElementById('dropdown-email');
+    
+    if (!authButtonsContainer || !userProfileContainer) return;
 
     if (token) {
-        authBtn.textContent = 'Logout';
-        authBtn.onclick = handleLogout;
+        authButtonsContainer.classList.add('hidden');
+        userProfileContainer.classList.remove('hidden');
+        
+        const payload = parseJwt(token);
+        if (payload && payload.email) {
+            dropdownEmail.textContent = payload.email;
+        } else {
+            dropdownEmail.textContent = 'Logged In';
+        }
     } else {
-        authBtn.textContent = 'Login / Sign Up';
-        authBtn.onclick = openAuthModal;
+        authButtonsContainer.classList.remove('hidden');
+        userProfileContainer.classList.add('hidden');
     }
 }
 
 function handleLogout() {
     localStorage.removeItem('token');
+    document.getElementById('dropdown-menu').classList.remove('show');
     checkAuthStatus();
-    // Show a subtle notification instead of alert
+    // Switch to editor section
+    document.querySelector('a[href="#editor-section"]').click();
     showToast('You have been logged out.');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const avatarBtn = document.getElementById('avatar-btn');
+    const dropdownMenu = document.getElementById('dropdown-menu');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    if (avatarBtn && dropdownMenu) {
+        avatarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!avatarBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.classList.remove('show');
+            }
+        });
+    }
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', handleLogout);
+    }
+});
 
 // ==========================================
 // AUTH FORM SUBMISSION
@@ -748,3 +843,196 @@ function showToast(message, duration = 3000) {
         setTimeout(() => toast.remove(), 300);
     }, duration);
 }
+
+/* =========================================================
+   Dashboard & History Logic
+   ========================================================= */
+
+async function loadDashboard() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+        // Fetch Stats
+        const statsRes = await fetch(`${API_URL}/dashboard/stats`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (statsRes.ok) {
+            const stats = await statsRes.json();
+            const statSubmissions = document.getElementById('stat-total-submissions');
+            if (statSubmissions) statSubmissions.textContent = stats.total_submissions || 0;
+            
+            const statExplanations = document.getElementById('stat-total-explanations');
+            if (statExplanations) statExplanations.textContent = stats.total_explanations || 0;
+            
+            const langsCount = Object.keys(stats.languages_practiced || {}).length;
+            const statLangs = document.getElementById('stat-languages');
+            if (statLangs) statLangs.textContent = langsCount || 0;
+        }
+
+        // Fetch History
+        const histRes = await fetch(`${API_URL}/submissions`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (histRes.ok) {
+            const submissions = await histRes.json();
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            if (submissions.length === 0) {
+                list.innerHTML = '<li class="history-item"><div class="history-item-left"><span class="history-snippet">No past submissions found.</span></div></li>';
+            }
+            
+            submissions.forEach(sub => {
+                const li = document.createElement('li');
+                li.className = 'history-item';
+                const dateStr = new Date(sub.created_at).toLocaleString();
+                let snippet = sub.code_snippet || sub.github_url || 'No code provided';
+                if (snippet.length > 50) snippet = snippet.substring(0, 50) + '...';
+                
+                li.innerHTML = `
+                    <div class="history-item-left">
+                        <span class="history-language">${sub.language}</span>
+                        <span class="history-snippet">${snippet}</span>
+                        <span class="history-date">${dateStr}</span>
+                    </div>
+                `;
+                li.addEventListener('click', () => loadSubmission(sub));
+                list.appendChild(li);
+            });
+        }
+    } catch (err) {
+        console.error("Failed to load dashboard:", err);
+    }
+}
+
+async function loadSubmission(sub) {
+    // 1. Switch back to editor tab
+    document.querySelector('a[href="#editor-section"]').click();
+    
+    // 2. Set language and code
+    const langSelect = document.getElementById('language-select');
+    if (langSelect) langSelect.value = sub.language.toLowerCase();
+    
+    // Update Monaco model language if editor exists
+    if (monacoEditor) {
+        const monacoLangMap = {
+            'cpp': 'cpp', 'java': 'java', 'javascript': 'javascript', 'python': 'python',
+            'go': 'go', 'ruby': 'ruby', 'php': 'php', 'csharp': 'csharp', 'swift': 'swift'
+        };
+        const lang = sub.language.toLowerCase();
+        const monacoLang = monacoLangMap[lang] || lang;
+        
+        monaco.editor.setModelLanguage(monacoEditor.getModel(), monacoLang);
+        if (typeof updateLangIcon === 'function') {
+            updateLangIcon(lang);
+        }
+        if (sub.code_snippet) {
+            monacoEditor.setValue(sub.code_snippet);
+            document.getElementById('github-url-input').value = '';
+        } else if (sub.github_url) {
+            monacoEditor.setValue('');
+            document.getElementById('github-url-input').value = sub.github_url;
+        }
+    }
+    
+    currentSubmissionId = sub.id;
+    
+    // 3. Fetch chat history
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    const aiChatHistory = document.getElementById('ai-chat-history');
+    const aiChatInputContainer = document.getElementById('ai-chat-input-container');
+    const aiPanel = document.getElementById('ai-panel');
+    
+    if (aiPanel) aiPanel.classList.remove('hidden');
+    
+    aiChatHistory.innerHTML = '<p class="ai-loading">Loading chat history...</p>';
+    aiChatInputContainer.classList.add('hidden');
+    
+    try {
+        const chatRes = await fetch(`/api/chat/${sub.id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (chatRes.ok) {
+            const chatHistory = await chatRes.json();
+            aiChatHistory.innerHTML = ''; // Clear initial loading message
+            
+            chatHistory.forEach(chat => {
+                if (chat.user_message && chat.user_message !== 'Explain this code') {
+                    const userMsg = document.createElement('div');
+                    userMsg.className = 'ai-message user-message';
+                    userMsg.innerHTML = marked.parse(chat.user_message);
+                    aiChatHistory.appendChild(userMsg);
+                }
+                
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'ai-message ai-response';
+                aiMsg.innerHTML = marked.parse(chat.ai_response);
+                aiChatHistory.appendChild(aiMsg);
+            });
+            
+            aiChatInputContainer.classList.remove('hidden');
+            
+            // Scroll to bottom
+            aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
+        } else {
+            aiChatHistory.innerHTML = '<p class="ai-error">Failed to load history.</p>';
+        }
+    } catch (err) {
+        aiChatHistory.innerHTML = `<p class="ai-error">Network Error: ${err.message}</p>`;
+    }
+}
+
+// Navigation Setup
+document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const editorSection = document.getElementById('editor-section');
+    const dashboardSection = document.getElementById('dashboard-section');
+    const historySection = document.getElementById('history-section');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('href');
+            
+            // Update active link state
+            navLinks.forEach(l => l.style.fontWeight = '500');
+            link.style.fontWeight = 'bold';
+            
+            // Hide all by default
+            if (editorSection) {
+                editorSection.classList.add('hidden');
+                editorSection.style.display = 'none';
+            }
+            if (dashboardSection) {
+                dashboardSection.classList.add('hidden');
+                dashboardSection.style.display = 'none';
+            }
+            if (historySection) {
+                historySection.classList.add('hidden');
+                historySection.style.display = 'none';
+            }
+            
+            if (targetId === '#editor-section') {
+                if (editorSection) {
+                    editorSection.classList.remove('hidden');
+                    editorSection.style.display = 'block';
+                }
+            } else if (targetId === '#dashboard') {
+                if (dashboardSection) {
+                    dashboardSection.classList.remove('hidden');
+                    dashboardSection.style.display = 'block';
+                }
+                loadDashboard();
+            } else if (targetId === '#history') {
+                if (historySection) {
+                    historySection.classList.remove('hidden');
+                    historySection.style.display = 'block';
+                }
+                loadDashboard();
+            }
+        });
+    });
+});

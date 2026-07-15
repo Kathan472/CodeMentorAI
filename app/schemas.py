@@ -38,3 +38,33 @@ class ExplainRequest(BaseModel):
 class FollowUpRequest(BaseModel):
     submission_id: int
     question: str
+
+
+class SubmissionResponse(BaseModel):
+    id: int
+    user_id: int
+    code_snippet: Optional[str]
+    github_url: Optional[str]
+    language: str
+    created_at: str
+
+    class Config:
+        from_attributes = True
+
+
+class ChatHistoryResponse(BaseModel):
+    id: int
+    user_message: str
+    ai_response: str
+    tokens_used: int
+    created_at: str
+
+    class Config:
+        from_attributes = True
+
+
+class DashboardStatsResponse(BaseModel):
+    total_submissions: int
+    total_explanations: int
+    languages_practiced: dict
+    total_tokens_used: int

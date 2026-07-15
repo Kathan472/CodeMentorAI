@@ -220,3 +220,15 @@ __marimo__/
 # Local SQLite Database
 *.db
 *.sqlite3
+
+# ============================================================
+# CodeMentor AI — Project-Specific
+# ============================================================
+# NOTE: .env.example IS intentionally tracked (it has no real secrets).
+# Only .env (with real secrets) is ignored.
+
+# Debug artifacts
+/tmp/payload.json
+
+# Test artifacts
+test_dashboard.py

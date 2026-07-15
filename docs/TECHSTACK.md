@@ -2,7 +2,7 @@
 
 **Document Version:** 2.0 (Final - Only Free Options)  
 **Date:** July 2026  
-**Stack:** Python + FastAPI + MySQL + Gemini API  
+**Stack:** Python + FastAPI + MySQL + Multi-Model AI Router (OpenRouter/NVIDIA/Gemini)  
 **Total Cost:** **$0/month FOREVER** (100% FREE)  
 **Timeline:** 14-16 weeks MVP  
 
@@ -15,7 +15,7 @@
 Frontend:     Vercel (FREE)
 Backend:      Python + FastAPI on Railway (FREE)
 Database:     MySQL on Railway (FREE)
-AI API:       Gemini API (FREE FOREVER)
+AI API:       Multi-Model AI Router (OpenRouter/NVIDIA/Gemini) (FREE FOREVER)
 ─────────────────────────────
 TOTAL:        $0/month 🎉
 ```
@@ -25,7 +25,7 @@ TOTAL:        $0/month 🎉
 ✅ **You Know Python** - Faster development  
 ✅ **FastAPI** - Fastest Python framework  
 ✅ **Railway** - Best free hosting (Python + MySQL together)  
-✅ **Gemini API** - Unlimited FREE tier forever  
+✅ **Multi-Model AI Router (OpenRouter/NVIDIA/Gemini)** - Unlimited FREE tier forever  
 ✅ **Production Ready** - Real companies use this  
 
 ---
@@ -100,7 +100,7 @@ passlib[bcrypt]==1.7.4
 bcrypt==4.1.0
 pydantic==2.5.0
 
-# AI - Gemini (FREE FOREVER)
+# AI - Multi-Model AI (FREE FOREVER)
 google-generativeai==0.3.0
 
 # Utilities
@@ -237,9 +237,9 @@ class UserStats(Base):
 
 ---
 
-## 4. AI API: Google Gemini (COMPLETELY FREE FOREVER)
+## 4. AI API: Google Multi-Model AI (COMPLETELY FREE FOREVER)
 
-### Why Gemini?
+### Why Multi-Model AI?
 ```
 ✅ UNLIMITED FREE FOREVER
 ✅ No credit card required
@@ -250,7 +250,7 @@ class UserStats(Base):
 ✅ Perfect for educational use
 ```
 
-### Get Gemini API Key (5 minutes)
+### Get Multi-Model AI Router (OpenRouter/NVIDIA/Gemini) Key (5 minutes)
 
 ```bash
 # Step 1: Visit
@@ -268,7 +268,7 @@ GEMINI_API_KEY=your_key_here
 # DONE! You have unlimited FREE AI access! 🎉
 ```
 
-### Gemini Service Integration
+### Multi-Model AI Service Integration
 
 ```python
 # app/services/gemini_service.py
@@ -280,12 +280,12 @@ load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-class GeminiService:
+class Multi-Model AIService:
     def __init__(self):
         self.model = genai.GenerativeModel('gemini-pro')
     
     def explain_code(self, code: str, language: str) -> str:
-        """Explain code using Gemini API (FREE!)"""
+        """Explain code using Multi-Model AI Router (OpenRouter/NVIDIA/Gemini) (FREE!)"""
         system_prompt = f"""You are a patient programming tutor explaining {language} code to a beginner.
 
 Explain EACH LINE in simple, plain English with concrete examples.
@@ -321,7 +321,7 @@ Provide a clear, 2-3 sentence answer using beginner-friendly language."""
         return response.text
 
 # Usage
-gemini = GeminiService()
+gemini = Multi-Model AIService()
 explanation = gemini.explain_code("x = 5", "python")
 ```
 
@@ -468,11 +468,11 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from app.database import get_db
 from app.models import Submission, ChatHistory
-from app.services.gemini_service import GeminiService
+from app.services.gemini_service import Multi-Model AIService
 from app.middleware.auth import get_current_user
 
 router = APIRouter()
-gemini = GeminiService()
+gemini = Multi-Model AIService()
 
 class CodeExplanationRequest(BaseModel):
     code: str
@@ -484,7 +484,7 @@ async def explain_code(
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
-    """Explain code using Gemini AI (FREE!)"""
+    """Explain code using Multi-Model AI AI (FREE!)"""
     try:
         explanation = gemini.explain_code(request.code, request.language)
         
@@ -555,7 +555,7 @@ async def ask_followup(
 # Database Connection (from Railway)
 DATABASE_URL=mysql+mysql-connector-python://user:password@host:port/database
 
-# Gemini API (FREE!)
+# Multi-Model AI Router (OpenRouter/NVIDIA/Gemini) (FREE!)
 GEMINI_API_KEY=your_gemini_api_key_here
 
 # Authentication
@@ -608,7 +608,7 @@ venv/
 # Step 5: Add to Railway environment
 # Railway Dashboard → Backend service → Variables
 # DATABASE_URL = (paste MySQL connection string)
-# GEMINI_API_KEY = (your Gemini key)
+# GEMINI_API_KEY = (your Multi-Model AI key)
 
 # Step 6: Deploy Frontend to Vercel
 # Visit: https://vercel.com
@@ -648,11 +648,11 @@ codementor-backend/
 │   │   ├── __init__.py
 │   │   ├── auth.py             # Login/signup
 │   │   ├── submissions.py      # Code submissions
-│   │   ├── chat.py             # Gemini explanations
+│   │   ├── chat.py             # Multi-Model AI explanations
 │   │   └── dashboard.py        # User stats
 │   ├── services/
 │   │   ├── __init__.py
-│   │   └── gemini_service.py   # Gemini AI
+│   │   └── gemini_service.py   # Multi-Model AI AI
 │   ├── middleware/
 │   │   ├── __init__.py
 │   │   └── auth.py             # JWT verification
@@ -680,7 +680,7 @@ codementor-backend/
 │ Frontend Hosting (Vercel)       $0     │
 │ Backend Hosting (Railway)       $0     │
 │ Database - MySQL (Railway)      $0     │
-│ AI API - Gemini (Google)        $0     │
+│ AI API - Multi-Model AI (Google)        $0     │
 │ Domain (optional)               $0     │
 ├────────────────────────────────────────┤
 │ TOTAL                           $0 🎉  │
@@ -738,7 +738,7 @@ git push origin main
 
 ---
 
-## 11. Test Gemini Locally
+## 11. Test Multi-Model AI Locally
 
 ```python
 # test_gemini.py
@@ -754,7 +754,7 @@ model = genai.GenerativeModel('gemini-pro')
 # Test 1: Explain code
 code = "x = 5\nprint(x)"
 response = model.generate_content(f"Explain this Python code:\n{code}")
-print("✅ Gemini is working!")
+print("✅ Multi-Model AI is working!")
 print(response.text)
 ```
 
@@ -763,7 +763,7 @@ print(response.text)
 python test_gemini.py
 ```
 
-If you see output, Gemini is working! ✅
+If you see output, Multi-Model AI is working! ✅
 
 ---
 
@@ -775,7 +775,7 @@ Follow-up Q&A:       0.8-1.5 seconds ✅
 Dashboard Load:      < 200ms ✅
 Chat History:        < 100ms ✅
 
-All with FREE Gemini API!
+All with FREE Multi-Model AI Router (OpenRouter/NVIDIA/Gemini)!
 ```
 
 ---
@@ -785,7 +785,7 @@ All with FREE Gemini API!
 | Week | Task |
 |------|------|
 | 1-2 | Setup, auth, database |
-| 3-4 | Gemini integration |
+| 3-4 | Multi-Model AI integration |
 | 5-7 | Build backend routes |
 | 8-10 | Frontend integration |
 | 11-12 | Testing & optimization |
@@ -800,7 +800,7 @@ All with FREE Gemini API!
 ✅ Frontend:  HTML/CSS/JS (Vercel)        $0 FOREVER
 ✅ Backend:   Python + FastAPI (Railway)  $0 FOREVER
 ✅ Database:  MySQL (Railway)             $0 FOREVER
-✅ AI:        Gemini API (Google)         $0 FOREVER
+✅ AI:        Multi-Model AI Router (OpenRouter/NVIDIA/Gemini) (Google)         $0 FOREVER
 ✅ Deploy:    Railway + Vercel            $0 FOREVER
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ TOTAL:                                  $0 FOREVER
@@ -815,7 +815,7 @@ All tools are production-ready.
 
 ## Ready to Build?
 
-1. **Today:** Get Gemini API key (5 min)
+1. **Today:** Get Multi-Model AI Router (OpenRouter/NVIDIA/Gemini) key (5 min)
 2. **Tomorrow:** Setup FastAPI locally (30 min)
 3. **This week:** Deploy to Railway (15 min)
 4. **Next:** Build frontend, integrate, LAUNCH! 🚀
