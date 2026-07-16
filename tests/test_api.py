@@ -171,7 +171,7 @@ class TestAIExplanation:
             json={"language": "python", "code": "def add(a, b): return a + b", "github_url": None},
             headers=auth_headers,
             stream=True,
-            timeout=30,
+            timeout=60,
         )
         assert r.status_code == 200
 

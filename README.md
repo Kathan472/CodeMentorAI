@@ -20,6 +20,8 @@
 
 ## 🎯 What is CodeMentor AI?
 
+![CodeMentorAI Architecture](assets/architecture_final.png)
+
 CodeMentor AI is a web-based learning tool that takes any code snippet (or an entire public GitHub repository) and explains it in plain English, line by line, using a powerful **Multi-Model AI Router**. It is designed for students, bootcamp learners, and developers who want to understand unfamiliar code fast.
 
 > **Why is it different from an IDE?**
@@ -49,7 +51,7 @@ CodeMentor AI is a web-based learning tool that takes any code snippet (or an en
 |---|---|
 | **Frontend** | Vanilla HTML, CSS, JavaScript — no framework needed |
 | **Code Editor** | [Monaco Editor](https://microsoft.github.io/monaco-editor/) (same engine as VS Code) |
-| **AI Provider** | **Multi-Model Router** (OpenRouter: Kimi/DeepSeek ➔ NVIDIA Llama ➔ Gemini 3.5) |
+| **AI Provider** | **Multi-Model Router** (OpenRouter: Hermes/Llama/Qwen ➔ NVIDIA Llama ➔ Gemini) |
 | **Backend** | Python 3.12 + [FastAPI](https://fastapi.tiangolo.com/) |
 | **Database** | [TiDB Cloud](https://tidbcloud.com/) (MySQL-compatible) via SQLAlchemy |
 | **Auth** | JWT tokens (python-jose) + bcrypt password hashing (passlib) |
@@ -64,10 +66,12 @@ To ensure the highest quality code explanations, CodeMentor AI does not rely on 
 
 The fallback chain is designed to prioritize models with exceptionally high coding and reasoning capabilities, finally falling back to Gemini for ultimate reliability:
 
-1. **Choice 1 & 2 (OpenRouter)**: Highly capable coding models (`moonshotai/kimi-k2.6` and `deepseek-ai/deepseek-v4-pro`). Requires `OPENROUTER_API_KEY`.
-2. **Choice 3 (NVIDIA)**: Exceptionally fast and highly capable model (`nvidia/llama-3.3-nemotron-super-49b-v1`). Requires `NVIDIA_API_KEY`.
-3. **Choice 4, 5 & 6 (OpenRouter Free)**: High-quality free models (`qwen3-coder:free`, `llama-3.3-70b-instruct:free`, `gemma-4-31b-it:free`).
-4. **Choice 7 (Google Gemini)**: The ultimate reliable fallback (`gemini-3.5-flash`). Free tier is generous and fast. Requires `GEMINI_API_KEY`.
+1. **Choice 1 (OpenRouter Free)**: `nousresearch/hermes-3-llama-3.1-405b:free` (Massive, top-tier coding logic).
+2. **Choice 2 (OpenRouter Free)**: `meta-llama/llama-3.3-70b-instruct:free` (Extremely fast, excellent reasoning).
+3. **Choice 3 (OpenRouter Free)**: `qwen/qwen3-coder:free` (Specialized coding model).
+4. **Choice 4 (NVIDIA)**: `nvidia/llama-3.3-nemotron-super-49b-v1` (Highly capable, fast). Requires `NVIDIA_API_KEY`.
+5. **Choice 5 (OpenRouter Free)**: `google/gemma-4-31b-it:free` (Google's powerful open model).
+6. **Choice 6 (Google Gemini)**: The ultimate reliable fallback. Free tier is generous and fast. Requires `GEMINI_API_KEY`.
 
 If a model rate-limits or fails, the router seamlessly moves to the next model in the chain without interrupting the user.
 

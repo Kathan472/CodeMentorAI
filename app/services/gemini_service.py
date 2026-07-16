@@ -32,20 +32,28 @@ class GeminiService:
             and self.openrouter_key != "your_openrouter_api_key_here"
         )
 
-        # Prioritized fallback chain:
-        # Choice 1: OpenRouter Kimi (highly capable)
-        # Choice 2: OpenRouter DeepSeek (extremely powerful reasoning)
-        # Choice 3: NVIDIA API model (highly capable, extremely fast)
-        # Choice 4-6: OpenRouter Free models (prioritized by coding / reasoning quality)
-        # Choice 7: Gemini (configured fallback)
+        # Prioritized fallback chain (ALL FREE MODELS):
+        # Choice 1: Hermes 3 Llama 3.1 405B (`nousresearch/hermes-3-llama-3.1-405b:free`)
+        # Choice 2: Llama 3.3 70B (`meta-llama/llama-3.3-70b-instruct:free`)
+        # Choice 3: Qwen 3 Coder (`qwen/qwen3-coder:free`)
+        # Choice 4: NVIDIA API model (`nvidia/llama-3.3-nemotron-super-49b-v1`)
+        # Choice 5: Gemma 4 31B (`google/gemma-4-31b-it:free`)
+        # Choice 6: Gemini (`gemini-3.5-flash` configured fallback)
         self.fallback_models = []
 
         if self.openrouter_configured:
-            self.fallback_models.append(
-                {"provider": "openrouter", "model": "moonshotai/kimi-k2.6"}
-            )
-            self.fallback_models.append(
-                {"provider": "openrouter", "model": "deepseek-ai/deepseek-v4-pro"}
+            self.fallback_models.extend(
+                [
+                    {
+                        "provider": "openrouter",
+                        "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+                    },
+                    {
+                        "provider": "openrouter",
+                        "model": "meta-llama/llama-3.3-70b-instruct:free",
+                    },
+                    {"provider": "openrouter", "model": "qwen/qwen3-coder:free"},
+                ]
             )
 
         if self.nvidia_configured:
@@ -57,15 +65,8 @@ class GeminiService:
             )
 
         if self.openrouter_configured:
-            self.fallback_models.extend(
-                [
-                    {"provider": "openrouter", "model": "qwen/qwen3-coder:free"},
-                    {
-                        "provider": "openrouter",
-                        "model": "meta-llama/llama-3.3-70b-instruct:free",
-                    },
-                    {"provider": "openrouter", "model": "google/gemma-4-31b-it:free"},
-                ]
+            self.fallback_models.append(
+                {"provider": "openrouter", "model": "google/gemma-4-31b-it:free"}
             )
 
         if self.gemini_configured:
