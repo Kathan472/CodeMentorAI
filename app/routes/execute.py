@@ -109,6 +109,43 @@ async def execute_code(req: ExecuteRequest):
         )
 
     # ---------------------------------------------------------------------------
+    # Educational Safety Check: Missing Standard Input
+    # ---------------------------------------------------------------------------
+    # If the user provides NO stdin, but their code clearly expects input, 
+    # we intercept it and return a helpful error. This prevents silent failures,
+    # infinite loops, and garbage memory values (e.g. uninitialized C++ vars).
+    if not req.stdin.strip():
+        import re
+        
+        INPUT_PATTERNS = {
+            "python": r"\binput\s*\(",
+            "java": r"(new\s+Scanner\s*\(\s*System\.in\s*\)|System\.console\(\)\.readLine)",
+            "c": r"\b(scanf|gets|getchar)\s*\(|fgets\s*\([^,]+,\s*[^,]+,\s*stdin\s*\)",
+            "cpp": r"\bcin\s*>>|getline\s*\(\s*cin",
+            "csharp": r"Console\.(ReadLine|Read)\s*\(",
+            "javascript": r"fs\.readFileSync\s*\(\s*0",
+            "typescript": r"fs\.readFileSync\s*\(\s*0",
+            "go": r"fmt\.(Scan|Scanf|Scanln|Scanner)\s*\(",
+            "rust": r"io::stdin\(\)\.read_line",
+            "ruby": r"\bgets\b",
+            "php": r"fgets\s*\(\s*STDIN\s*\)|readline\s*\(",
+        }
+        
+        pattern = INPUT_PATTERNS.get(req.language)
+        if pattern and re.search(pattern, req.code):
+            return ExecuteResponse(
+                success=False,
+                error=(
+                    f"CodeMentor AI Warning: Your {req.language.capitalize()} code contains input statements, "
+                    "but you left the 'Standard Input' box empty.\n\n"
+                    "Because this code runs in the cloud, it cannot prompt you interactively. "
+                    "If we run this, it will immediately hit an EOF (End of File) error or read garbage memory.\n\n"
+                    "👉 Please type your inputs into the 'STANDARD INPUT' box before clicking Run!"
+                ),
+                status="1"
+            )
+
+    # ---------------------------------------------------------------------------
     # Pre-process code for specific languages
     # ---------------------------------------------------------------------------
     code = req.code
@@ -157,6 +194,22 @@ async def execute_code(req: ExecuteRequest):
                 success=False,
                 output=output,
                 error=f"Runtime Error:\n{program_error}",
+                status=status,
+            )
+
+        # Catch silent failures (e.g. timeout, output limit, OOM, silent infinite loop)
+        if str(status) != "0":
+            signal = data.get("signal", "")
+            status_display = status if status else "Killed"
+            reason = f"Execution terminated abnormally (Exit Status: {status_display}"
+            if signal:
+                reason += f", Signal: {signal}"
+            reason += ").\n\nPossible causes:\n- Your program entered an infinite loop.\n- Your program expected input but none was provided, causing it to loop silently.\n- Execution timed out or output limit exceeded."
+            
+            return ExecuteResponse(
+                success=False,
+                output=output,
+                error=reason,
                 status=status,
             )
 

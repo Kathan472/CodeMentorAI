@@ -49,7 +49,7 @@ CodeMentor AI is a web-based learning tool that takes any code snippet (or an en
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | Vanilla HTML, CSS, JavaScript — no framework needed |
+| **Frontend** | Vanilla HTML, CSS, JavaScript - no framework needed |
 | **Code Editor** | [Monaco Editor](https://microsoft.github.io/monaco-editor/) (same engine as VS Code) |
 | **AI Provider** | **Multi-Model Router** (OpenRouter: Hermes/Llama/Qwen ➔ NVIDIA Llama ➔ Gemini) |
 | **Backend** | Python 3.12 + [FastAPI](https://fastapi.tiangolo.com/) |
@@ -77,7 +77,7 @@ If a model rate-limits or fails, the router seamlessly moves to the next model i
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Running Locally
 
 ### Prerequisites
 
@@ -85,11 +85,11 @@ If a model rate-limits or fails, the router seamlessly moves to the next model i
 - A MySQL or TiDB Cloud database
 - A [Google Gemini API key](https://aistudio.google.com/apikey) (free tier available)
 
-### Installation
+### Local Setup
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/your-username/CodeMentorAI.git
+# 1. Clone this repository
+git clone https://github.com/Kathan472/CodeMentorAI.git
 cd CodeMentorAI
 
 # 2. Create and activate a virtual environment
@@ -97,18 +97,18 @@ python3 -m venv venv
 source venv/bin/activate      # macOS/Linux
 # venv\Scripts\activate       # Windows
 
-# 3. Install dependencies
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# 4. Set up environment variables
+# 3. Set up environment variables
 cp .env.example .env
 # Edit .env and fill in your DATABASE_URL, GEMINI_API_KEY, and JWT_SECRET
 
-# 5. Start the server (database tables are created automatically on first run)
+# 4. Start the server (database tables are created automatically on first run)
 uvicorn app.main:app --reload
 ```
 
-Open your browser at **http://localhost:8000** and you're live!
+Open your browser at **http://localhost:8000** to view the app locally.
 
 ---
 
@@ -211,13 +211,24 @@ JavaScript Developer
 
 ### ❌ What happens if you forget to provide input?
 
-If your program expects input but the Standard Input box is empty, the program will instantly hit an **EOF (End of File)** because there is no data to read.
+Because running code in the cloud without providing standard input causes unpredictable behavior—such as `EOFError` crashes in Python, or infinite loops with garbage memory in C++—CodeMentor AI has a built-in **Educational Safety Check**.
 
-- **In Python**, it crashes with: `EOFError: EOF when reading a line`
-- **In Java**, it crashes with: `java.util.NoSuchElementException`
-- **In C++ / C**, the variables just remain empty or retain garbage memory values, which can cause infinite loops or silent calculation failures.
+If you leave the Standard Input box completely empty, our backend scans your code for common input statements (like `cin >>`, `input()`, `Scanner`, `scanf`). If it finds them, it immediately **intercepts the execution** and throws a custom warning:
+
+> **CodeMentor AI Warning:** Your [Language] code contains input statements, but you left the 'Standard Input' box empty.
+> Because this code runs in the cloud, it cannot prompt you interactively. If we run this, it will immediately hit an EOF (End of File) error or read garbage memory.
+> 👉 Please type your inputs into the 'STANDARD INPUT' box before clicking Run!
 
 **Golden Rule:** Always check if the code you are pasting contains an input statement. If it does, pre-fill the Standard Input box before clicking Run!
+
+### 🌩️ Troubleshooting: "Resource temporarily unavailable"
+If you click **Run** and immediately get an error that looks like this:
+```text
+Compiler Error:
+ERROR (catatonit:1): failed to fork child: Resource temporarily unavailable
+ERROR (catatonit:1): failed to spawn pid1: Resource temporarily unavailable
+```
+**Do not panic!** This is a generic cloud infrastructure error from the Wandbox servers, meaning they are temporarily under heavy load and out of containers. **It affects all languages.** It has nothing to do with your code—just wait a minute or two and click Run again.
 
 ### 🔍 How this differs from a real IDE
 
@@ -270,50 +281,16 @@ CodeMentorAI/
 
 ## 🚢 Deployment
 
-CodeMentor AI is divided into a Frontend and a Backend. You will deploy them separately.
+CodeMentor AI is deployed as a **self-contained monorepo**, meaning the frontend and backend run together as a single service. 
 
-### 1. Database (TiDB Cloud / PlanetScale)
-1. Create a free cluster on [TiDB Cloud](https://tidbcloud.com/).
-2. Copy the connection string and save it.
-3. Database tables are created automatically on first startup — no migrations needed.
+- **Hosting:** The application is deployed on **Render** as a Web Service.
+- **Database:** The database is hosted on **TiDB Cloud** (a MySQL-compatible distributed database).
+- **Architecture Benefits:** 
+  - **Zero CORS Issues**: Because the frontend and backend share the exact same domain, there are no cross-origin errors to configure.
+  - **Single Source of Truth**: One git push deploys the entire application.
+  - **Cost Effective**: Runs on a single web service instance.
 
-### 2. Backend (Railway / Render / Fly.io)
-1. Push your code to GitHub (the `venv/` and `.env` are already gitignored).
-2. Create a new project on your hosting provider and connect your GitHub repo.
-3. Set the following environment variables in your host's dashboard:
-   - `DATABASE_URL` (from Step 1)
-   - `GEMINI_API_KEY`
-   - `JWT_SECRET` (use a strong random value — **not** the default!)
-   - `NVIDIA_API_KEY` / `OPENROUTER_API_KEY` (optional fallbacks)
-   - `ENVIRONMENT=production`
-   - `DEBUG=False`
-4. Set the start command to: `uvicorn app.main:app --host 0.0.0.0 --port 8000`
-5. Note your deployed backend URL (e.g., `https://codementor-api.railway.app`).
-
-### 3. Frontend (Vercel / Netlify / GitHub Pages)
-Because the frontend is just static HTML/CSS/JS files, you can deploy it anywhere for free.
-1. Create a new project on Vercel or Netlify and point it to your GitHub repo.
-2. Set the "Root Directory" to `frontend/`.
-3. Before deploying, you need to tell the frontend where the backend lives. Open `frontend/app.js` and change the `API_BASE_URL`:
-   ```javascript
-   const API_BASE_URL = 'https://your-deployed-backend-url.com/api';
-   ```
-4. Deploy the frontend and note the URL (e.g., `https://codementor-ui.vercel.app`).
-
-### 4. CORS for Production
-For security, web browsers block the Frontend from talking to the Backend if they are on different domains (e.g., `.vercel.app` trying to talk to `.railway.app`), unless the Backend explicitly allows it. This is called CORS (Cross-Origin Resource Sharing).
-
-To fix this, go to `app/main.py` in your code and update the `allow_origins` list to include your exact deployed frontend URL:
-```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://codementor-ui.vercel.app"], # Replace with your frontend URL
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-```
-Commit and push this change to update your backend.
+Once deployed, the FastAPI backend automatically mounts the `frontend/` directory and serves `index.html` at the root URL (`/`).
 
 ---
 
