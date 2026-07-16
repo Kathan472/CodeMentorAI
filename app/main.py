@@ -76,5 +76,13 @@ async def health_check():
 # The entire /frontend directory is mounted at "/" so index.html is served
 # automatically. This makes the app a self-contained monorepo.
 # ---------------------------------------------------------------------------
+from fastapi.responses import FileResponse
+import os
+
 frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
+
+@app.get("/")
+async def serve_frontend():
+    return FileResponse(os.path.join(frontend_path, "index.html"))
+
 app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")
