@@ -10,7 +10,7 @@
 
 # ⚡ CodeMentor AI
 
-### *Your AI-powered pair programmer — paste any code and get an instant, structured explanation.*
+### *Your AI-powered pair programmer — paste any code or an github repository URL and get an instant, structured explanation.*
 
 [Features](#-features) · [Tech Stack](#-tech-stack) · [Multi-Model Router](#-multi-model-ai-router) · [Getting Started](#-getting-started) · [How Input Works](#-how-program-input-works) · [API Reference](#-api-reference) · [Deployment](#-deployment)
 
@@ -254,11 +254,7 @@ CodeMentorAI/
 │   ├── index.html              # Main page
 │   ├── styles.css              # All styles (dark mode, glassmorphism, animations)
 │   └── app.js                  # All frontend logic (auth, editor, streaming, history)
-├── docs/                       # Planning & design documents
-│   ├── PRD.md                  # Product Requirements Document
-│   ├── DESIGN.md               # UI/UX Design Spec
-│   ├── TECHSTACK.md            # Technology decisions
-│   └── TODO.md                 # Development task checklist
+
 ├── tests/                      # Automated tests
 ├── .env.example                # Environment variable template (copy to .env)
 ├── .gitignore                  # Excludes .env, venv, __pycache__, etc.
