@@ -12,6 +12,8 @@
 
 ### *Your AI-powered pair programmer — paste any code or an github repository URL and get an instant, structured explanation.*
 
+**[🔴 Live Demo: CodeMentor AI on Render](https://codementorai-gd4s.onrender.com)**
+
 [Features](#-features) · [Tech Stack](#-tech-stack) · [Multi-Model Router](#-multi-model-ai-router) · [Getting Started](#-getting-started) · [How Input Works](#-how-program-input-works) · [API Reference](#-api-reference) · [Deployment](#-deployment)
 
 </div>
