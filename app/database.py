@@ -23,7 +23,12 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # ---------------------------------------------------------------------------
 # Engine — set echo=True to log SQL queries during development
 # ---------------------------------------------------------------------------
-engine = create_engine(DATABASE_URL, echo=False)
+engine = create_engine(
+    DATABASE_URL,
+    echo=False,
+    pool_pre_ping=True,
+    pool_recycle=3600
+)
 
 # ---------------------------------------------------------------------------
 # Session Factory
